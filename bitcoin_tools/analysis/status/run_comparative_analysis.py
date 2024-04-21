@@ -134,13 +134,13 @@ def run_experiment(f_dust, f_parsed_utxos, f_parsed_txs):
     :rtype: None
     """
 
-    print "Running comparative data analysis."
+    print ("Running comparative data analysis.")
     # Comparative dust analysis between different snapshots
     fin_names = ['height-' + str(i) + 'K/' + f_parsed_utxos + '.json' for i in range(100, 550, 50)]
     dust_files = ['height-' + str(i) + 'K/' + f_dust + '.json' for i in range(100, 550, 50)]
     legend = [str(i) + 'K' for i in range(100, 550, 50)]
 
-    print "Comparing dust from different snapshots."
+    print ("Comparing dust from different snapshots.")
     # Get dust files from different dates to compare (Change / Add the ones you'll need)
     compare_dust(dust_files=dust_files, legend=legend)
 
@@ -154,12 +154,12 @@ def run_experiment(f_dust, f_parsed_utxos, f_parsed_txs):
 
     # Comparative analysis between different snapshots
     # UTXO amount comparison
-    print "Comparing UTXO amount from different snapshots."
+    print ("Comparing UTXO amount from different snapshots.")
     compare_attribute(fin_names=fin_names, x_attribute='amount', xlabel='Amount (Satoshi)', legend=legend,
                       out_name='cmp_utxo_amount')
 
     # UTXO size comparison
-    print "Comparing UTXO size from different snapshots."
+    print ("Comparing UTXO size from different snapshots.")
     compare_attribute(fin_names=fin_names, x_attribute='register_len', xlabel='Size (bytes)', legend=legend,
                       out_name='cmp_utxo_size')
 

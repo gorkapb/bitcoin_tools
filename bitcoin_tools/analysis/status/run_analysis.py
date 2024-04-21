@@ -6,6 +6,7 @@ from bitcoin_tools.analysis.status.plots import plot_pie_chart_from_samples, ove
 from bitcoin_tools import CFG
 from getopt import getopt
 from sys import argv
+import copy
 
 
 def set_out_names(count_p2sh, non_std_only):
@@ -57,16 +58,36 @@ def non_std_outs_analysis(samples):
     # and 3-3, and put the rest into "Other".
 
     groups = [[u'multisig-1-3'], [u'multisig-1-2'], [u'multisig-1-1'], [u'multisig-3-3'], [u'multisig-2-2'],
-              [u'multisig-2-3'], ["P2WSH"], ["P2WPKH"], [False, u'multisig-OP_NOTIF-OP_NOTIF',
+              [u'multisig-2-3'], ["P2WSH"], ["P2WPKH"],["P2TR"], [False, u'multisig-OP_NOTIF-OP_NOTIF',
                                   u'multisig-<2153484f55544f555420544f2023424954434f494e2d41535345545320202020202020202'
                                   u'0202020202020202020202020202020202020202020202020202020>-1']]
-    labels = ['M. 1-3', 'M. 1-2', 'M. 1-1', 'M. 3-3', 'M. 2-2', 'M. 2-3', "P2WSH", "P2WPKH", 'Other']
+    labels = ['M. 1-3', 'M. 1-2', 'M. 1-1', 'M. 3-3', 'M. 2-2', 'M. 2-3', "P2WSH", "P2WPKH","P2TR", 'Other']
 
     out_name = "utxo_non_std_type"
 
     plot_pie_chart_from_samples(samples=samples, save_fig=out_name, labels=labels, groups=groups, title="",
                                 colors=["#165873", "#428C5C", "#4EA64B", "#ADD96C", "#B1D781", "#FAD02F",
                                                    "#A69229", "#B69229", "#F69229"], labels_out=True)
+
+
+def all_outs_analysis(samples):
+
+    for i in range(len(samples["out_type"])):
+        if samples["non_std_type"][i] == "std":
+            samples["non_std_type"][i] = samples["out_type"][i]
+
+    samples_special = samples.pop("non_std_type")
+
+    groups = [[0], [2, 3, 4, 5], [1], [u'multisig-1-3', u'multisig-1-2', u'multisig-1-1', u'multisig-3-3',
+                  u'multisig-2-2', u'multisig-2-3'], ["P2WSH"], ["P2WPKH"], ["P2TR"]]
+
+    labels = ['P2PKH', 'P2PK', 'P2SH', 'MULTISIG', "P2WSH",
+              "P2WPKH", "P2TR"]
+
+    out_name = "utxo_all_type"
+
+    plot_pie_chart_from_samples(samples=samples_special, save_fig=out_name, labels=labels, groups=groups, title="",
+                                labels_out=True)
 
 
 def tx_based_analysis(tx_fin_name):
@@ -127,7 +148,7 @@ def utxo_based_analysis(utxo_fin_name):
     log_axis = [False, 'x', [False, 'x'], [False, 'x'], [False, 'x'], [False, 'x']]
 
     x_attributes_pie = ['out_type', 'out_type']
-    xlabels_pie = [['C-even', 'C-odd', 'U-even', 'U-odd'], ['P2PKH', 'P2PK', 'P2SH', 'Other']]
+    xlabels_pie = [['C-even', 'C-odd', 'U-even', 'U-odd'], ['P2PKH', 'P2PK', 'P2SH']]
     out_names_pie = ["utxo_pk_types", "utxo_types"]
     pie_groups = [[[2], [3], [4], [5]], [[0], [2, 3, 4, 5], [1]]]
 
@@ -136,17 +157,19 @@ def utxo_based_analysis(utxo_fin_name):
     # Since the attributes for the pie chart are already included in the normal chart, we won't pass them to the
     # sampling function.
     samples = get_samples(x_attributes + [x_attribute_special], fin_name=utxo_fin_name)
+    samples_all = copy.deepcopy(samples)
     samples_special = samples.pop(x_attribute_special)
 
-    for attribute, label, log, out in zip(x_attributes, xlabels, log_axis, out_names):
-        xs, ys = get_cdf(samples[attribute], normalize=True)
-        plots_from_samples(xs=xs, ys=ys, xlabel=label, log_axis=log, save_fig=out, ylabel="Number of UTXOs")
+    #for attribute, label, log, out in zip(x_attributes, xlabels, log_axis, out_names):
+    #    xs, ys = get_cdf(samples[attribute], normalize=True)
+    #    plots_from_samples(xs=xs, ys=ys, xlabel=label, log_axis=log, save_fig=out, ylabel="Number of UTXOs")
 
-    for attribute, label, out, groups in (zip(x_attributes_pie, xlabels_pie, out_names_pie, pie_groups)):
-        plot_pie_chart_from_samples(samples=samples[attribute], save_fig=out, labels=label, title="", groups=groups,
-                                    colors=["#165873", "#428C5C", "#4EA64B", "#ADD96C"], labels_out=True)
-    # Special case: non-standard
-    non_std_outs_analysis(samples_special)
+    #for attribute, label, out, groups in (zip(x_attributes_pie, xlabels_pie, out_names_pie, pie_groups)):
+    #    plot_pie_chart_from_samples(samples=samples[attribute], save_fig=out, labels=label, title="", groups=groups,
+    #                                colors=["#165873", "#428C5C", "#4EA64B", "#ADD96C"], labels_out=True)
+    # Special case: non-standardf
+    #non_std_outs_analysis(samples_special)
+    all_outs_analysis(samples_all)
 
 
 def dust_analysis(utxo_fin_name, f_dust, fltr=None):
@@ -244,6 +267,7 @@ def utxo_based_analysis_with_filters(utxo_fin_name):
                lambda x: x["out_type"] in [2, 3, 4, 5],
                lambda x: x["non_std_type"] == "P2WPKH",
                lambda x: x["non_std_type"] == "P2WSH",
+               lambda x: x["non_std_type"] == "P2TR",
                lambda x: x["non_std_type"] is not False and "multisig" in x["non_std_type"],
                lambda x: x["non_std_type"] is False,
                lambda x: x["amount"] == 1,
@@ -256,7 +280,7 @@ def utxo_based_analysis_with_filters(utxo_fin_name):
                lambda x: x["out_type"] == 1,
                lambda x: x["amount"] == 1]
 
-    legends = [['P2PKH', 'P2SH', 'P2PK', 'P2WPKH', 'P2WSH', 'Multisig', 'Other'],
+    legends = [['P2PKH', 'P2SH', 'P2PK', 'P2WPKH', 'P2WSH', 'P2TR' , 'Multisig', 'Other'],
                ['$=1$', '$1 < x \leq 10$', '$10 < x \leq 10^2$', '$10^2 < x \leq 10^4$', '$10^4 < x \leq 10^6$',
                 '$10^6 < x \leq 10^8$', '$10^8 < x$'], ['P2SH'], ['Amount = 1']]
     comparative = [True, True, False, False]
@@ -322,33 +346,33 @@ def run_experiment(coin, chainstate, count_p2sh, non_std_only):
     f_utxos, f_parsed_txs, f_parsed_utxos, f_dust = set_out_names(count_p2sh, non_std_only)
 
     # Parse all the data in the chainstate.
-    print "Parsing the chainstate."
+    print("Parsing the chainstate.")
     parse_ldb(f_utxos, fin_name=chainstate)
 
     # Parses transactions and utxos from the dumped data.
-    print "Adding meta-data for transactions and UTXOs."
+    print("Adding meta-data for transactions and UTXOs.")
     transaction_dump(f_utxos, f_parsed_txs)
     utxo_dump(f_utxos, f_parsed_utxos, coin, count_p2sh=count_p2sh, non_std_only=non_std_only)
 
     # Print basic stats from data
-    print "Running overview analysis."
+    print("Running overview analysis.")
     overview_from_file(f_parsed_txs, f_parsed_utxos)
 
     # Generate plots from tx data (from f_parsed_txs)
-    print "Running transaction based analysis."
+    print("Running transaction based analysis.")
     tx_based_analysis(f_parsed_txs)
 
     # Generate plots from utxo data (from f_parsed_utxos)
-    print "Running UTXO based analysis."
+    print ("Running UTXO based analysis.")
     utxo_based_analysis(f_parsed_utxos)
 
     # # Aggregates dust and generates plots.
-    print "Running dust analysis."
+    print ("Running dust analysis.")
     dust_analysis(f_parsed_utxos, f_dust)
     dust_analysis_all_fees(f_parsed_utxos)
 
     # Generate plots with filters
-    print "Running analysis with filters."
+    print ("Running analysis with filters.")
     utxo_based_analysis_with_filters(f_parsed_utxos)
     tx_based_analysis_with_filters(f_parsed_txs)
 

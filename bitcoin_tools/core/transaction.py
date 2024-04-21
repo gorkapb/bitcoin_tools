@@ -230,7 +230,7 @@ class TX:
         tx.version = int(change_endianness(parse_element(tx, 4)), 16)
 
         # INPUTS
-        tx.inputs = decode_verint(parse_varint(tx))
+        tx.inputs = decode_varint(parse_varint(tx))
 
         for i in range(tx.inputs):
             tx.prev_tx_id.append(change_endianness(parse_element(tx, 32)))
@@ -516,29 +516,29 @@ class TX:
         :rtype: None
         """
 
-        print "version: " + str(self.version) + " (" + change_endianness(int2bytes(self.version, 4)) + ")"
-        print "number of inputs: " + str(self.inputs) + " (" + encode_varint(self.inputs) + ")"
+        print ("version: " + str(self.version) + " (" + change_endianness(int2bytes(self.version, 4)) + ")")
+        print ("number of inputs: " + str(self.inputs) + " (" + encode_varint(self.inputs) + ")")
         for i in range(self.inputs):
-            print "input " + str(i)
-            print "\t previous txid (little endian): " + self.prev_tx_id[i] + \
-                  " (" + change_endianness(self.prev_tx_id[i]) + ")"
-            print "\t previous tx output (little endian): " + str(self.prev_out_index[i]) + \
-                  " (" + change_endianness(int2bytes(self.prev_out_index[i], 4)) + ")"
-            print "\t input script (scriptSig) length: " + str(self.scriptSig_len[i]) \
-                  + " (" + encode_varint((self.scriptSig_len[i])) + ")"
-            print "\t input script (scriptSig): " + self.scriptSig[i].content
-            print "\t decoded scriptSig: " + Script.deserialize(self.scriptSig[i].content)
+            print ("input " + str(i))
+            print ("\t previous txid (little endian): " + self.prev_tx_id[i] + \
+                  " (" + change_endianness(self.prev_tx_id[i]) + ")")
+            print ("\t previous tx output (little endian): " + str(self.prev_out_index[i]) + \
+                  " (" + change_endianness(int2bytes(self.prev_out_index[i], 4)) + ")")
+            print ("\t input script (scriptSig) length: " + str(self.scriptSig_len[i]) \
+                  + " (" + encode_varint((self.scriptSig_len[i])) + ")")
+            print ("\t input script (scriptSig): " + self.scriptSig[i].content)
+            print ("\t decoded scriptSig: " + Script.deserialize(self.scriptSig[i].content))
             if self.scriptSig[i].type is "P2SH":
-                print "\t \t decoded redeemScript: " + InputScript.deserialize(self.scriptSig[i].get_element(-1)[1:-1])
-            print "\t nSequence: " + str(self.nSequence[i]) + " (" + int2bytes(self.nSequence[i], 4) + ")"
-        print "number of outputs: " + str(self.outputs) + " (" + encode_varint(self.outputs) + ")"
+                print ("\t \t decoded redeemScript: " + InputScript.deserialize(self.scriptSig[i].get_element(-1)[1:-1]))
+            print ("\t nSequence: " + str(self.nSequence[i]) + " (" + int2bytes(self.nSequence[i], 4) + ")")
+        print ("number of outputs: " + str(self.outputs) + " (" + encode_varint(self.outputs) + ")")
         for i in range(self.outputs):
-            print "output " + str(i)
-            print "\t Satoshis to be spent (little endian): " + str(self.value[i]) + \
-                  " (" + change_endianness(int2bytes(self.value[i], 8)) + ")"
-            print "\t output script (scriptPubKey) length: " + str(self.scriptPubKey_len[i]) \
-                  + " (" + encode_varint(self.scriptPubKey_len[i]) + ")"
-            print "\t output script (scriptPubKey): " + self.scriptPubKey[i].content
-            print "\t decoded scriptPubKey: " + Script.deserialize(self.scriptPubKey[i].content)
+            print ("output " + str(i))
+            print ("\t Satoshis to be spent (little endian): " + str(self.value[i]) + \
+                  " (" + change_endianness(int2bytes(self.value[i], 8)) + ")")
+            print ("\t output script (scriptPubKey) length: " + str(self.scriptPubKey_len[i]) \
+                  + " (" + encode_varint(self.scriptPubKey_len[i]) + ")")
+            print ("\t output script (scriptPubKey): " + self.scriptPubKey[i].content)
+            print ("\t decoded scriptPubKey: " + Script.deserialize(self.scriptPubKey[i].content))
 
-        print "nLockTime: " + str(self.nLockTime) + " (" + int2bytes(self.nLockTime, 4) + ")"
+        print ("nLockTime: " + str(self.nLockTime) + " (" + int2bytes(self.nLockTime, 4) + ")")

@@ -1,4 +1,4 @@
-from urllib2 import urlopen, Request
+from urllib.request import urlopen, Request
 from json import loads
 
 
@@ -14,9 +14,9 @@ def change_endianness(x):
     # If there is an odd number of elements, we make it even by adding a 0
     if (len(x) % 2) == 1:
         x += "0"
-    y = x.decode('hex')
+    y = bytes.fromhex(x)
     z = y[::-1]
-    return z.encode('hex')
+    return z.hex()
 
 
 def int2bytes(a, b):
@@ -35,7 +35,7 @@ def int2bytes(a, b):
         raise Exception(str(a) + " is too big to be represented with " + str(b) + " bytes. Maximum value is "
                         + str(m) + ".")
 
-    return ('%0' + str(2 * b) + 'x') % a
+    return ('%0' + str(2 * b) + 'x') % int(a)
 
 
 def parse_element(tx, size):

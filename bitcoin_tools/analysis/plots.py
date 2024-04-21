@@ -78,7 +78,7 @@ def plot_distribution(xs, ys, title, xlabel, ylabel, log_axis=None, save_fig=Fal
         plt.plot(xs, ys)  # marker='o'
     else:
         for i in range(len(xs)):
-            plt.plot(xs[i], ys[i], ' ', linestyle='solid')  # marker='o'
+            plt.plot(xs[i], ys[i],  linestyle='solid')  # marker='o'
 
     # Plot title and xy labels
     plt.title(title, {'color': 'k', 'fontsize': font_size})
@@ -101,6 +101,10 @@ def plot_distribution(xs, ys, title, xlabel, ylabel, log_axis=None, save_fig=Fal
     if y_sup_lim:
         ymin, ymax = plt.ylim()
         plt.ylim(ymin, y_sup_lim)
+
+    tick_val = [0, 100000, 200000, 300000, 400000, 500000, 600000, 700000, 800000]
+    tick_lab = ['0', '100K', '200K', '300K', '400K', '500K', '600K', '700K', '800K']
+    plt.xticks(tick_val, tick_lab)
 
     # Output result
     if save_fig:

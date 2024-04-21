@@ -45,10 +45,10 @@ def kill_line(line, kill_at_height, pid):
         try:
             height_str = re.search(' height=\d+ ', line)
             block_height = height_str.group()[8:-1]
-            print "    Block height {} read".format(block_height)
+            print ("    Block height {} read".format(block_height))
             if block_height == kill_at_height:
                 kill(pid, SIGTERM)
-                print "Process with pid {} KILLED!!!".format(pid)
+                print ("Process with pid {} KILLED!!!".format(pid))
                 exit()
 
         except AttributeError as err:
@@ -79,7 +79,7 @@ def follow(thefile, kill_at_height, pid, start_at=START_AT_ORIGIN):
         if line and not kill_line(line, kill_at_height, pid):
             continue
         if not line:
-            print "Waiting {} for new data...".format(SLEEP_INT)
+            print ("Waiting {} for new data...".format(SLEEP_INT))
             sleep(SLEEP_INT)
             continue
 
@@ -107,15 +107,15 @@ if __name__ == '__main__':
                 start = START_AT_ORIGIN
 
         if not kill_at_height or not pid:
-            print "Usage: "
-            print "    python kill_at_heigh.py -k block_heigh -p pid [-f file] [-o] [-e] "
+            print ("Usage: ")
+            print ("    python kill_at_heigh.py -k block_heigh -p pid [-f file] [-o] [-e] ")
             exit()
 
-        print "Starting to monitor file {} at {}".format(log_filename, start)
-        print "I'm going to kill process with pid {} at height {}".format(pid, kill_at_height)
+        print ("Starting to monitor file {} at {}".format(log_filename, start))
+        print ("I'm going to kill process with pid {} at height {}".format(pid, kill_at_height))
 
         logfile = open(log_filename, "r")
         follow(logfile, kill_at_height, pid, start_at=start)
 
     except IOError as err:
-        print "Bitcoind log file {} not found".format(log_filename)
+        print ("Bitcoind log file {} not found".format(log_filename))

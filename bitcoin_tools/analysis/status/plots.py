@@ -104,20 +104,20 @@ def overview_from_file(tx_fin_name, utxo_fin_name):
 
     samples = get_samples(['num_utxos', 'total_len', 'height'], fin_name=tx_fin_name)
 
-    print "\t Max height: ", str(max(samples['height']))
-    print "\t Num. of tx: ", str(len(samples['num_utxos']))
-    print "\t Num. of UTXOs: ", str(sum(samples['num_utxos']))
-    print "\t Avg. num. of UTXOs per tx: ", str(np.mean(samples['num_utxos']))
-    print "\t Std. num. of UTXOs per tx: ", str(np.std(samples['num_utxos']))
-    print "\t Median num. of UTXOs per tx: ", str(np.median(samples['num_utxos']))
+    print ("\t Max height: ", str(max(samples['height'])))
+    print ("\t Num. of tx: ", str(len(samples['num_utxos'])))
+    print ("\t Num. of UTXOs: ", str(sum(samples['num_utxos'])))
+    print ("\t Avg. num. of UTXOs per tx: ", str(np.mean(samples['num_utxos'])))
+    print ("\t Std. num. of UTXOs per tx: ", str(np.std(samples['num_utxos'])))
+    print ("\t Median num. of UTXOs per tx: ", str(np.median(samples['num_utxos'])))
 
     len_attribute = "total_len"
 
-    print "\t Size of the (serialized) UTXO set: ", str(np.sum(samples[len_attribute]))
+    print ("\t Size of the (serialized) UTXO set: ", str(np.sum(samples[len_attribute])))
 
     samples = get_samples("register_len", fin_name=utxo_fin_name)
     len_attribute = "register_len"
 
-    print "\t Avg. size per register: ", str(np.mean(samples[len_attribute]))
-    print "\t Std. size per register: ", str(np.std(samples[len_attribute]))
-    print "\t Median size per register: ", str(np.median(samples[len_attribute]))
+    print ("\t Avg. size per register: ", str(np.mean(samples[len_attribute])))
+    print ("\t Std. size per register: ", str(np.std(samples[len_attribute])))
+    print ("\t Median size per register: ", str(np.median(samples[len_attribute])))
